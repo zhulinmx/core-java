@@ -1,5 +1,7 @@
 package algorithm.tree;
 
+import com.sun.source.tree.Tree;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -138,6 +140,31 @@ public class TreeSolution2 {
         return root;
     }
 
+    /**
+     * leetcode 114. 二叉树展开为链表
+     * 先序，把左节点搬到右节点上
+     *
+     * @param root
+     */
+    public void flatten(TreeNode root) {
+        dfs(root);
+    }
+
+    private TreeNode dfs(TreeNode root) {
+        if (root == null || root.left == null && root.right == null) {
+            return root;
+        }
+
+        TreeNode right = dfs(root.right);
+        TreeNode left = dfs(root.left);
+
+        if (left != null) {
+            left.right = root.right;
+            root.right = root.left;
+            root.left = null;
+        }
+        return right == null ? left : right;
+    }
 
     public boolean isValidBST(TreeNode root) {
         List<Long> list = new ArrayList();
@@ -216,6 +243,9 @@ public class TreeSolution2 {
         System.out.println(minDepth(tt));
 
         System.out.println(new TreeSolution2().lowestCommonAncestor(tt, tt2, tt4));
+
+        new TreeSolution2().flatten(tt);
+        System.out.println(tt);
 
         System.out.println("-----------------invertTree---------------");
         TreeNode tree = new TreeNode(1, new TreeNode(7), new TreeNode(8, new TreeNode(3), new TreeNode(4)));

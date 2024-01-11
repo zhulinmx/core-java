@@ -98,50 +98,6 @@ public class TestT {
     }
 
 
-    public static String expressionExpand(String s) {
-        Stack stack = new Stack();
-        StringBuffer str = new StringBuffer();
-
-        int first = s.indexOf('[');
-        int last = s.lastIndexOf(']');
-
-        if(first < 0) return s;
-        if(last < 0) return str.toString();
-
-        for(int i = 0; i<=last; i++) {
-            char c = s.charAt(i);
-            if(c!=']')
-                stack.push(c);
-            else {
-                StringBuffer inStr = new StringBuffer();
-                StringBuffer cbf = new StringBuffer();
-                while (!"[".equals(String.valueOf(stack.peek())))
-                    inStr.insert(0, stack.pop());
-
-                stack.pop();
-
-                while (!stack.isEmpty() && String.valueOf(stack.peek()).matches("-?[0-9]+(\\\\.[0-9]+)?")) {
-                    cbf.insert(0, stack.pop());
-                }
-                int count = Integer.valueOf(cbf.toString());
-                while (count > 0) {
-                    stack.push(inStr.toString());
-                    count--;
-                }
-            }
-        }
-
-        if(last < s.length()-1)
-            str.append(s.substring(last+1));
-
-        while(!stack.isEmpty())
-            str.insert(0, stack.pop());
-
-        return str.toString();
-    }
-
-
-
     public static void main(String[] args) {
         var set = new HashSet<String>();
         set.add("Cat");
@@ -151,7 +107,6 @@ public class TestT {
         System.out.println(TestT.wordBreak("ab", List.of("a", "b")));
         System.out.println(TestT.wordBreak("applepenapple", List.of("apple", "pen")));
         System.out.println(TestT.wordBreak("catsandog", List.of("cats", "dog", "sand", "and", "cat")));
-        //System.out.println(TestT.expressionExpand("5[10[abcd]Ac20[abcde]]"));
 
     }
 }

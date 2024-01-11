@@ -179,6 +179,34 @@ public class C3 {
         return slow;
     }
 
+    /**
+     * leetcode 24. 两两交换链表中的节点
+     *
+     * @param head
+     * @return 交换后链表的头节点
+     */
+    public static ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode phead = head.next;
+        ListNode curr = head;
+        ListNode pre = null;
+
+        while (curr != null && curr.next != null) {
+            ListNode tmp = curr.next;
+            ListNode nextCurr = curr.next.next;
+            if (pre != null) pre.next = tmp;
+            tmp.next = curr;
+            curr.next = nextCurr;
+            pre = curr;
+            curr = nextCurr;
+        }
+
+        return phead;
+    }
+
+
 
     public static void main(String[] args) {
         ListNode n1 = new ListNode(1);
@@ -208,6 +236,11 @@ public class C3 {
         ListNode ll1 = ListNode.buildSequenceList(1, 2, 3, 4, 5);
         System.out.println(removeNthFromEnd(ll1, 1));
 
+        System.out.println("-----------------swapPairs---------------");
+        System.out.println(swapPairs(ListNode.buildSequenceList(1, 2, 3, 4, 5)));
+        System.out.println(swapPairs(ListNode.buildSequenceList(1)));
+        System.out.println(swapPairs(ListNode.buildSequenceList(1, 2)));
+        System.out.println(swapPairs(ListNode.buildSequenceList(1, 2, 3, 4)));
     }
 
 }

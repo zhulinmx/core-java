@@ -1,8 +1,7 @@
 package algorithm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import java.util.*;
 
 /**
  * 输入一个矩阵，按照从外向里以顺时针的顺序依次打印出每一个数字，
@@ -189,6 +188,51 @@ public class MatrixSolution {
         }
     }
 
+
+    /**
+     * leetcode 207. 课程表
+     * 先修课程对 [0, 1] 表示：想要学习课程 0 ，你需要先完成课程 1
+     *
+     * numCourses = 2, prerequisites = [[1,0]]   输出：true
+     * 解释：总共有 2 门课程。学习课程 1 之前，你需要完成课程 0 。这是可能的。
+     *
+     * numCourses = 2, prerequisites = [[1,0],[0,1]]  输出：false
+     * 解释：总共有 2 门课程。学习课程 1 之前，你需要先完成​课程 0 ；并且学习课程 0 之前，你还应先完成课程 1 。这是不可能的。
+     *
+     * 思路：有向图有没有环 + BFS（广度优先遍历）
+     * 构建入度表、邻接表
+     *
+     * @param numCourses
+     * @param prerequisites
+     * @return
+     */
+    public static boolean canFinish(int numCourses, int[][] prerequisites) {
+        int[] indegrees = new int[numCourses];
+        List<List<Integer>> adjacency = new ArrayList<>();
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++)
+            adjacency.add(new ArrayList<>());
+        // Get the indegree and adjacency of every course.
+        for (int[] cp : prerequisites) {
+            indegrees[cp[0]]++;
+            adjacency.get(cp[1]).add(cp[0]);
+        }
+        if (Arrays.stream(indegrees).allMatch(x -> x > 0)) return false;
+        // Get all the courses with the indegree of 0.
+        System.out.println(Arrays.toString(indegrees));
+        for (int i = 0; i < numCourses; i++)
+            if (indegrees[i] == 0) queue.add(i);
+        // BFS TopSort.
+        while (!queue.isEmpty()) {
+            int pre = queue.poll();
+            numCourses--;
+            for (int cur : adjacency.get(pre))
+                if (--indegrees[cur] == 0) queue.add(cur);
+        }
+        return numCourses == 0;
+    }
+
+
     public static void main(String[] args) {
 
         int[][] nums = {{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}, {13, 14, 15, 16}};
@@ -205,6 +249,10 @@ public class MatrixSolution {
         System.out.println("-----------------rotate-----------------------");
         rotate(new int[][]{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}});
 
+        System.out.println("-----------------canFinish-----------------------");
+        System.out.println(canFinish(2, new int[][]{{1, 0}, {0, 1}}));
+        System.out.println(canFinish(2, new int[][]{{1, 0}}));
+        System.out.println(canFinish(4, new int[][]{{1, 0}, {0, 2}, {1, 2}, {1, 3}}));
     }
 
 }
