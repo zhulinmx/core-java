@@ -232,6 +232,118 @@ public class MatrixSolution {
         return numCourses == 0;
     }
 
+    /**
+     * leetcode 200. 岛屿数量
+     * 给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。
+     *
+     * 思路：把握住 DFS 的时机
+     * 非常好的总结：岛屿类问题的通用解法、DFS 遍历框架 -> https://leetcode.cn/problems/number-of-islands/solutions/211211/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/
+     *
+     * @param grid
+     * @return
+     */
+    public int numIslands(char[][] grid) {
+        int num = 0;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == '1') {
+                    dfs(grid, i, j);
+                    num++;
+                }
+            }
+        }
+        return num;
+    }
+
+    public void dfs(char[][] grid, int r, int c) {
+        //NOT IN area
+        if (r < 0 || r >= grid.length || c < 0 || c >= grid[0].length) {
+            return;
+        }
+
+        if (grid[r][c] != '1') {
+            return;
+        }
+
+        //mark already dfs
+        grid[r][c] = '2';
+
+        dfs(grid, r - 1, c);
+        dfs(grid, r, c - 1);
+        dfs(grid, r + 1, c);
+        dfs(grid, r, c + 1);
+    }
+
+
+    /**
+     * leetcode 994. 腐烂的橘子
+     * 值 0 代表空单元格；
+     * 值 1 代表新鲜橘子；
+     * 值 2 代表腐烂的橘子。
+     * 每分钟，腐烂的橘子 周围 4 个方向上相邻 的新鲜橘子都会腐烂。返回 直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 -1 。
+     *
+     * 思路：BFS
+     *
+     * @param grid
+     * @return
+     */
+    public int orangesRotting(int[][] grid) {
+
+        //1.定义2个int数组，2个一组来记录腐烂橘子的上下左右位置。腐烂橘子(0，0)
+        //在矩阵中 上{-1,0}   下{1,0}  左{0,-1}   右{0,1}
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        int step = 0;//感染次数
+        int flash = 0;//新鲜橘子数（后面用于判定是否为-1）
+
+        int row = grid.length;//所给矩阵行
+        int col = grid[0].length;//列
+
+        Queue<int[]> queue = new ArrayDeque<>();
+
+        //2.遍历矩阵 将所有的腐烂橘子入队，并且记录初始新鲜橘子数
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (grid[i][j] == 1) {
+                    flash++;
+                }
+                if (grid[i][j] == 2) {
+                    queue.offer(new int[]{i, j});
+                }
+            }
+        }
+
+        //3.遍历所有腐烂橘子，同时感染四周
+        while (flash > 0 && !queue.isEmpty()) {//有橘子且队列不空
+            step++;
+            //队列中现有的所有腐烂橘子都要进行一次感染
+            int size = queue.size();
+            for (int s = 0; s < size; s++) {
+                int[] poll = queue.poll();//腐烂橘子
+                for (int i = 0; i < 4; i++) {
+                    //4个位置dx[i] dy[i]  ， xy 为要感染的橘子位置
+                    int x = poll[0] + dx[i];//第x行
+                    int y = poll[1] + dy[i];//第y列
+                    if ((x >= 0 && x < row) && (y >= 0 && y < col) && grid[x][y] == 1) {
+                        //xy不越界，并且要感染的地方是 新鲜橘子
+                        grid[x][y] = 2;
+                        //把被感染的橘子 入队
+                        queue.offer(new int[]{x, y});
+                        //新鲜橘子-1
+                        flash--;
+                    }
+                }
+            }
+        }
+
+        //感染完了之后如果还有新鲜橘子
+        if (flash > 0) {
+            return -1;
+        } else {
+            return step;
+        }
+    }
+
 
     public static void main(String[] args) {
 
@@ -253,6 +365,16 @@ public class MatrixSolution {
         System.out.println(canFinish(2, new int[][]{{1, 0}, {0, 1}}));
         System.out.println(canFinish(2, new int[][]{{1, 0}}));
         System.out.println(canFinish(4, new int[][]{{1, 0}, {0, 2}, {1, 2}, {1, 3}}));
+
+        System.out.println("-----------------numIslands-----------------------");
+        System.out.println(new MatrixSolution().numIslands(new char[][]{{'1', '0'}, {'0', '1'}, {'1', '0'}, {'1', '1'}}));
+        System.out.println(new MatrixSolution().numIslands(new char[][]{{'1', '0'}, {'0', '1'}, {'1', '1'}, {'1', '1'}}));
+
+        System.out.println("-----------------orangesRotting-----------------------");
+        System.out.println(new MatrixSolution().orangesRotting(new int[][]{{2, 1, 1}, {1, 1, 0}, {0, 1, 1}}));
+        System.out.println(new MatrixSolution().orangesRotting(new int[][]{{2, 1, 1}, {1, 0, 0}, {0, 1, 0}}));
+        System.out.println(new MatrixSolution().orangesRotting(new int[][]{{0, 2}}));
+
     }
 
 }
