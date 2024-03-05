@@ -3,7 +3,7 @@ package algorithm.structure;
 
 import java.util.*;
 
-public class C3 {
+public class ListSolution1 {
 
     /**
      * leetcode 21. 合并两个有序链表
@@ -207,6 +207,47 @@ public class C3 {
     }
 
 
+    /**
+     * leetcode 23. 合并 K 个升序链表
+     * 给你一个链表数组，每个链表都已经按升序排列。
+     * 请你将所有链表合并到一个升序链表中，返回合并后的链表。
+     *
+     * @param lists
+     * @return
+     */
+    public static ListNode mergeKLists(ListNode[] lists) {
+        if (lists == null || lists.length == 0) return null;
+
+        /*
+        // 最简单的方法：依次两两merge，时间复杂度高
+        ListNode root = lists[0];
+        for (int i = 1; i < lists.length; i++) {
+            root = mergeTwoLists(root, lists[i]);
+        }
+        return root;
+        */
+
+        // 优先队列：按照值从小到大排序
+        PriorityQueue<ListNode> queue = new PriorityQueue<>((o1, o2) -> o1.val - o2.val);
+        ListNode root = new ListNode(-1); //排序后的链表的头节点
+        ListNode l1 = root;
+
+        for (ListNode i : lists)    //将链表数组中每个链表加入队列中
+            if (i != null) queue.add(i);
+
+        while (!queue.isEmpty()) {
+            //弹出优先队列最小值（即最小链表）加入root
+            ListNode min = queue.poll();
+            l1.next = min;
+            //遍历下一个节点
+            l1 = l1.next;
+            //如果该链表不为空，将最小链表的下一个节点加入优先队列
+            if(min.next != null) queue.add(min.next);
+        }
+
+        return root.next;
+    }
+
 
     public static void main(String[] args) {
         ListNode n1 = new ListNode(1);
@@ -227,10 +268,7 @@ public class C3 {
         System.out.println(detectCycle2(list1));
 
         System.out.println("-----------------mergeTwoLists---------------");
-        ListNode l1 = ListNode.buildSequenceList(1, 3, 5);
-        ListNode l2 = ListNode.buildSequenceList(2, 4, 6);
-        ListNode ll = mergeTwoLists(l1, l2);
-        System.out.println(ll);
+        System.out.println(mergeTwoLists(ListNode.buildSequenceList(1, 3, 5), ListNode.buildSequenceList(2, 4, 6)));
 
         System.out.println("-----------------removeNthFromEnd---------------");
         ListNode ll1 = ListNode.buildSequenceList(1, 2, 3, 4, 5);
@@ -241,6 +279,10 @@ public class C3 {
         System.out.println(swapPairs(ListNode.buildSequenceList(1)));
         System.out.println(swapPairs(ListNode.buildSequenceList(1, 2)));
         System.out.println(swapPairs(ListNode.buildSequenceList(1, 2, 3, 4)));
+
+        System.out.println("-----------------mergeKLists---------------");
+        System.out.println(mergeKLists(new ListNode[]{ListNode.buildSequenceList(1, 4, 5), ListNode.buildSequenceList(1, 3, 4), ListNode.buildSequenceList(2, 6)}));
+
     }
 
 }

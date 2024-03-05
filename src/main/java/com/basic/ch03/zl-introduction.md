@@ -21,18 +21,20 @@ Exception是程序本身可以处理的异常，包括运行时异常（RuntimeE
 
 （2）非运行时异常如IOException、ClassNotFoundException、FileNotFoundException等
 
-# 异常捕获、处理
-`
+# 异常捕获、处理的通用结构
+
+```
    try() {
-       ...代码
+       //代码
     } catch (XXXException e) {
          //捕获异常后处理
     } catch (YYYException e2) {
-         ...
          //catch 异常的时候，要先 catch 具体的（小的）异常，然后再 catch 抽象的（大的）异常，层层捕捉
          //这样可以做到精准打击
-
     } finally {
-        ...
+         //关闭资源
     }
-    `
+
+```
+       
+    

@@ -90,11 +90,154 @@ public class StringSolution {
         return sbf.toString();
     }
 
+    /**
+     * leetcode49. 字母异位词分组
+     * 给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+     * 字母异位词 是由重新排列源单词的所有字母得到的一个新单词。
+     *
+     * 输入: strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
+     * 输出: [["bat"],["nat","tan"],["ate","eat","tea"]]
+     *
+     * @param strs
+     * @return
+     */
+    public List<List<String>> groupAnagrams(String[] strs) {
+        if (strs == null || strs.length == 0) return null;
+        if (strs.length == 1) return List.of(List.of(strs[0]));
+
+        Map<String, List<String>> map = new HashMap<>();
+        for (String str : strs) {
+            char[] charArray = str.toCharArray();
+            Arrays.sort(charArray);
+            String s = String.valueOf(charArray);
+            if (map.containsKey(s)) {
+                List<String> list = map.get(s);
+                list.add(str);
+                map.put(s, list);
+            } else {
+                map.put(s, new ArrayList<>(Arrays.asList(str)));
+            }
+        }
+        List<List<String>> res = new ArrayList<>(map.values());
+        return res;
+    }
+
+
+    /**
+     * leetcode 5. 最长回文子串
+     * 给你一个字符串 s，找到 s 中最长的回文子串。
+     * 如果字符串的反序与原始字符串相同，则该字符串称为回文字符串。
+     *
+     * 思路：中心扩散
+     *
+     * @param s
+     * @return
+     */
+    public String longestPalindrome(String s) {
+        int len = s.length();
+        int maxStart = 0;
+        int maxLength = 0;
+
+        for (int i = 0; i < len; i++) {
+            //中心节点有可能是1个或者1个，即长度是奇数或偶数两种情况
+            for (int j = 0; j <= 1; j++) {
+                //左右两边
+                int l = i;
+                int r = i + j;
+
+                while (l >= 0 && r < len && s.charAt(l) == s.charAt(r)) {
+                    l--;
+                    r++;
+                }
+
+                // 回溯到回文字符串的起始和结束位置
+                l++;
+                r--;
+
+                // 比较并保存最长的字符串起始位置和长度
+                if (maxLength < r - l + 1) {
+                    maxLength = r - l + 1;
+                    maxStart = l;
+                }
+            }
+        }
+
+        return s.substring(maxStart, maxStart + maxLength);
+
+    }
+
+    /**
+     * leetcode 65. 有效数字
+     *
+     * 思路：有限状态机（DFA）
+     *
+     * @param s
+     * @return
+     */
+    public boolean isNumber(String s) {
+        int state = 0;
+        int finals = 0b101101000;
+        int[][] transfer = new int[][]{
+                {0, 1, 6, 2, -1},
+                {-1, -1, 6, 2, -1},
+                {-1, -1, 3, -1, -1},
+                {8, -1, 3, -1, 4},
+                {-1, 7, 5, -1, -1},
+                {8, -1, 5, -1, -1},
+                {8, -1, 6, 3, 4},
+                {-1, -1, 5, -1, -1},
+                {8, -1, -1, -1, -1}
+        };
+        char[] ss = s.toCharArray();
+        for (int i = 0; i < ss.length; ++i) {
+            int id = make(ss[i]);
+            if (id < 0) return false;
+            state = transfer[state][id];
+            if (state < 0) return false;
+        }
+        return (finals & (1 << state)) > 0;
+    }
+
+    private int make(char c) {
+        switch (c) {
+            case ' ':
+                return 0;
+            case '+':
+            case '-':
+                return 1;
+            case '.':
+                return 3;
+            case 'E':
+            case 'e':
+                return 4;
+            default:
+                if (c >= 48 && c <= 57) return 2;
+        }
+        return -1;
+    }
+
+
     public static void main(String[] args) {
+
+        StringSolution solution = new StringSolution();
         //System.out.println(new StringSolution().unRepeatStr("abbd"));
         System.out.println(new StringSolution().permutation1("abc") );
         for(String str: new StringSolution().permutation1("abc")) {
             System.out.println(str);
         }
+
+        System.out.println("-----------------groupAnagrams---------------");
+        System.out.println(solution.groupAnagrams(new String[]{"eat", "tea", "tan", "ate", "nat", "bat"}));
+        System.out.println(solution.groupAnagrams(new String[]{"a"}));
+        System.out.println(solution.groupAnagrams(new String[]{""}));
+
+        System.out.println("-----------------longestPalindrome---------------");
+        System.out.println(solution.longestPalindrome("babad"));
+        System.out.println(solution.longestPalindrome("cbbd"));
+
+        System.out.println("-----------------isNumber---------------");
+        System.out.println(solution.isNumber("0"));
+        System.out.println(solution.isNumber("e9"));
+        System.out.println(solution.isNumber("."));
     }
 }

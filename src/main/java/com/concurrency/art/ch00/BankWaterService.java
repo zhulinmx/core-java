@@ -1,6 +1,7 @@
 package com.concurrency.art.ch00;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.*;
 
 public class BankWaterService implements Runnable {
@@ -20,21 +21,22 @@ public class BankWaterService implements Runnable {
      */
     private ConcurrentHashMap<String, Integer> sheetBankWaterCount = new ConcurrentHashMap<>();
 
-    private void count() {
+    /**
+     * 计算流水
+     */
+    private void caculate() {
         for (int i = 0; i < 4; i++) {
-            executor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    // 计算当前 sheet 的银流数据
-                    sheetBankWaterCount.put(Thread.currentThread().getName(), 1);
-                    try {
-                        // 计算完成，插入一个屏障
-                        cyclicBarrier.await();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (BrokenBarrierException e) {
-                        e.printStackTrace();
-                    }
+            executor.execute(() -> {
+                // 计算当前 sheet 的银流数据
+                int sum = (int) (Math.random() * 1000);
+                sheetBankWaterCount.put(Thread.currentThread().getName(), sum);
+                try {
+                    // 计算完成，插入一个屏障
+                    cyclicBarrier.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
                 }
             });
         }
@@ -57,6 +59,6 @@ public class BankWaterService implements Runnable {
 
     public static void main(String[] args) {
         BankWaterService bankWaterService = new BankWaterService();
-        bankWaterService.count();
+        bankWaterService.caculate();
     }
 }

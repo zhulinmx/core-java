@@ -7,7 +7,7 @@ import java.util.Random;
 
 /**
  * 往多线程上考虑考虑
- * java8增加parallelStream
+ * java8 增加 parallelStream
  */
 public class T14_ParallelStreamAPI {
 	public static void main(String[] args) throws InterruptedException, IOException {

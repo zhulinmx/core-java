@@ -1,33 +1,11 @@
 package algorithm.tree;
 
-import com.sun.source.tree.Tree;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 public class TreeSolution2 {
-
-    public List<List<Integer>> levelOrder(TreeNode root) {
-        List<List<Integer>> listList = new ArrayList<>();
-        if(root == null) return listList;
-
-        LinkedList<TreeNode> q = new LinkedList();
-        q.add(root);
-
-        while (!q.isEmpty()) {
-            List<Integer> list = new ArrayList<>();
-            int size = q.size();
-            for(int i=0; i<size; i++) {
-                TreeNode t = q.poll();
-                if(t.left != null) q.addLast(t.left);
-                if(t.right != null) q.addLast(t.right);
-                list.add(t.val);
-            }
-            listList.add(list);
-        }
-        return listList;
-    }
 
     /**
      * leetcode 111. 二叉树的最小深度
@@ -120,8 +98,9 @@ public class TreeSolution2 {
 
     /**
      * leetcode 236. 二叉树的最近公共祖先
+     * git rebase的原理
      *
-     * DFS
+     * 思路：后序遍历，p和q从下往上走，第一次相遇的节点就是最近祖先
      *
      * @param root 最近的共同祖先
      * @param p
@@ -129,7 +108,6 @@ public class TreeSolution2 {
      * @return
      */
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
-        //System.out.println(root);
         if (root == null || root == p || root == q) return root;
 
         TreeNode left = lowestCommonAncestor(root.left, p, q);
@@ -142,7 +120,8 @@ public class TreeSolution2 {
 
     /**
      * leetcode 114. 二叉树展开为链表
-     * 先序，把左节点搬到右节点上
+     *
+     * 思路：先序，把左节点搬到右节点上
      *
      * @param root
      */
@@ -223,14 +202,89 @@ public class TreeSolution2 {
         if (x.right != null) dfs(x.right, newBase);
     }
 
+    /**
+     * leetcode 105. 从前序与中序遍历序列构造二叉树
+     * 给定两个整数数组 preorder 和 inorder ，其中 preorder 是二叉树的先序遍历， inorder 是同一棵树的中序遍历，请构造二叉树并返回其根节点。
+     *
+     * 局部相似
+     *
+     * @param preorder
+     * @param inorder
+     * @return
+     */
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if (preorder.length == 0) {
+            return null;
+        }
+
+        int pre = 0, in = 0;
+        //先序遍历第一个值作为根节点
+        TreeNode curRoot = new TreeNode(preorder[pre]);
+        TreeNode root = curRoot;
+        Stack<TreeNode> roots = new Stack<>();
+        roots.push(curRoot);
+        pre++;
+
+        //遍历前序遍历的数组
+        while (pre < preorder.length) {
+            //出现了当前节点的值和中序遍历数组的值相等，寻找是谁的右子树
+            if (curRoot.val == inorder[in]) {
+                //每次进行出栈，实现倒着遍历
+                while (!roots.isEmpty() && roots.peek().val == inorder[in]) {
+                    curRoot = roots.pop();
+                    in++;
+                }
+                //设为当前的右孩子
+                curRoot.right = new TreeNode(preorder[pre]);
+                //更新 curRoot
+                curRoot = curRoot.right;
+            } else {
+                //否则的话就一直作为左子树
+                curRoot.left = new TreeNode(preorder[pre]);
+                curRoot = curRoot.left;
+            }
+            roots.push(curRoot);
+            pre++;
+        }
+
+        return root;
+    }
+
+
+    /**
+     * leetcode 230. 二叉搜索树中第K小的元素
+     *
+     * 思路：二叉搜索树的中序遍历为递增序列，即本题旨在求中序遍历的第k个节点。
+     *
+     * @param root
+     * @param k
+     * @return
+     */
+    int res, k;
+
+    public int kthSmallest(TreeNode root, int k) {
+        this.k = k;
+        dfsMiddle(root);
+        return res;
+    }
+
+    void dfsMiddle(TreeNode root) {
+        if (root == null) return;
+        dfsMiddle(root.left);
+        if (k == 0) return;
+        if (--k == 0) res = root.val;
+        dfsMiddle(root.right);
+    }
+
     public static void main(String[] args) {
+        TreeSolution2 solution = new TreeSolution2();
+
         TreeNode t = new TreeNode(2);
         t.setLeft(new TreeNode(1));
         t.setRight(new TreeNode(4));
         //System.out.println(new TreeSolution().isBalanced(t));
-        System.out.println(new TreeSolution2().isValidBST(t));
-        System.out.println(new TreeSolution2().sumNumbers(t));
-
+        System.out.println(solution.isValidBST(t));
+        System.out.println(solution.sumNumbers(t));
 
         TreeNode tt1 = new TreeNode(8);
         TreeNode tt2 = new TreeNode(7);
@@ -242,15 +296,23 @@ public class TreeSolution2 {
         System.out.println(maxDepth(tt));
         System.out.println(minDepth(tt));
 
-        System.out.println(new TreeSolution2().lowestCommonAncestor(tt, tt2, tt4));
+        System.out.println("-----------------lowestCommonAncestor---------------");
+        System.out.println(solution.lowestCommonAncestor(tt, tt2, tt4));
 
-        new TreeSolution2().flatten(tt);
+        System.out.println("-----------------flatten---------------");
+        solution.flatten(tt);
         System.out.println(tt);
 
         System.out.println("-----------------invertTree---------------");
         TreeNode tree = new TreeNode(1, new TreeNode(7), new TreeNode(8, new TreeNode(3), new TreeNode(4)));
         System.out.println(invertTree(tree));
 
+        System.out.println("-----------------buildTree---------------");
+        System.out.println(solution.buildTree(new int[]{3, 9, 20, 15, 7}, new int[]{20, 9, 15, 3, 7}));
+
+        System.out.println("-----------------kthSmallest---------------");
+        TreeNode tree1 = new TreeNode(6, new TreeNode(2), new TreeNode(8, new TreeNode(7), new TreeNode(11)));
+        System.out.println(solution.kthSmallest(tree1, 4));
     }
 
 

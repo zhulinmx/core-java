@@ -4,6 +4,7 @@ import java.util.*;
 
 /**
  * 加锁的容器使其安全
+ * Collections.synchronizedXXXXX()
  *
  */
 public class T03_CollectionsSynchronized {

@@ -1,6 +1,6 @@
 package algorithm.structure;
 
-import java.util.Stack;
+import java.util.*;
 
 /**
  * 栈相关算法
@@ -39,26 +39,21 @@ public class StackSolution {
      */
     public static boolean isValid(String s) {
         Stack<Character> stack = new Stack();
+        Map<Character, Character> map = new HashMap();
+        map.put(')', '(');
+        map.put('}', '{');
+        map.put(']', '[');
+
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
-            switch (c) {
-                case ')': {
-                    if (stack.size() > 0 && stack.peek().equals('(')) stack.pop();
-                    else return false;
-                    break;
-                }
-                case '}': {
-                    if (stack.size() > 0 && stack.peek().equals('{')) stack.pop();
-                    else return false;
-                    break;
-                }
-                case ']': {
-                    if (stack.size() > 0 && stack.peek().equals('[')) stack.pop();
-                    else return false;
-                    break;
-                }
-                default:
-                    stack.push(c);
+            char val = map.getOrDefault(c, ' ');
+            if (val != ' ') {
+                if (stack.size() > 0 && val == stack.peek())
+                    stack.pop();
+                else
+                    return false;
+            } else {
+                stack.push(c);
             }
         }
         return stack.size() == 0 ? true : false;
@@ -119,10 +114,42 @@ public class StackSolution {
         return str.toString();
     }
 
+    /**
+     * leetcode 84. 柱状图中最大的矩形
+     * 给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+     * 求在该柱状图中，能够勾勒出来的矩形的最大面积
+     *
+     * @param heights
+     * @return
+     */
+    public static int largestRectangleArea(int[] heights) {
+        int res = heights[0];
+        //单调栈，栈内元素对应的是heights的索引，所有索引对应的heights的元素是递增的
+        Deque<Integer> stack = new ArrayDeque<>();
+        stack.push(0);
+
+        //构建新数组，前后补0
+        int[] new_heights = new int[heights.length + 2];
+        for (int i = 1; i < heights.length + 1; i++) {
+            new_heights[i] = heights[i - 1];
+        }
+
+        for (int i = 1; i < new_heights.length; i++) {
+            while (!stack.isEmpty() && new_heights[stack.peek()] > new_heights[i]) {
+                int curPos = stack.pop();
+                int left = stack.peek();
+                int right = i;
+                res = Math.max(res, (right - left - 1) * new_heights[curPos]);
+            }
+            stack.push(i);
+        }
+
+        return res;
+    }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(isPopOrder(new int[] {1,2,3,4,5}, new int[] {4,5,3,2,1}));
-        System.out.println(isPopOrder(new int[] {1,2,3,4,5}, new int[] {4,3,5,1,2}));
+        System.out.println(isPopOrder(new int[]{1, 2, 3, 4, 5}, new int[]{4, 5, 3, 2, 1}));
+        System.out.println(isPopOrder(new int[]{1, 2, 3, 4, 5}, new int[]{4, 3, 5, 1, 2}));
 
         System.out.println("-----------------isValid-------------");
         System.out.println(isValid("()[]{}"));
@@ -132,5 +159,9 @@ public class StackSolution {
         System.out.println("-----------------decodeString-------------");
         System.out.println(decodeString("3[a]2[bc]"));
         System.out.println(decodeString("2[abc]3[cd]ef"));
+
+        System.out.println("-----------------largestRectangleArea-------------");
+        System.out.println(largestRectangleArea(new int[]{2, 4}));
+        System.out.println(largestRectangleArea(new int[]{2, 1, 5, 6, 2, 3}));
     }
 }

@@ -1,11 +1,11 @@
-package algorithm;
+package algorithm.skill;
 
 import java.util.*;
 
 /**
  * 滑动窗口相关
  */
-public class C22 {
+public class WindowSolution {
 
     /**
      * 给定一个数组和滑动窗口的大小，找出所有滑动窗口里数值的最大值
@@ -44,7 +44,8 @@ public class C22 {
     }
 
     /**
-     * 优化：使用优先级队列
+     * 上一题优化：使用优先级队列
+     *
      * @param nums
      * @param k
      * @return

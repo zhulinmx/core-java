@@ -1,5 +1,8 @@
 package algorithm.sort;
 
+
+import java.util.*;
+
 /**
  * 搜索算法建立在排序算法的基础之上
  * 二分法查找算法
@@ -30,68 +33,50 @@ public class SearchSolution {
      */
     public static int[] searchRange(int[] nums, int target) {
         int[] arrs = {-1, -1};
-        if(nums.length==0) return arrs;
-        if(nums.length==1 && nums[0]==target) {
+        if (nums.length == 0) return arrs;
+        if (nums.length == 1 && nums[0] == target) {
             arrs[0] = 0;
             arrs[1] = 0;
             return arrs;
         }
         int pre = 0;
-        int last = nums.length-1;
+        int last = nums.length - 1;
         int m = (pre + last) / 2;
 
-        while(pre <= last) {
-            if(nums[pre] > target || nums[last] < target) break;
+        while (pre <= last) {
+            if (nums[pre] > target || nums[last] < target) break;
 
-            if(nums[pre] == target) {
+            if (nums[pre] == target) {
                 arrs[0] = pre;
-                if(pre==last) break;
-                if(nums[last] == target) { arrs[1] = last; break;}
-                else if(pre==last-1) break;
-            }else if(nums[m] < target) {
+                if (pre == last) break;
+                if (nums[last] == target) {
+                    arrs[1] = last;
+                    break;
+                } else if (pre == last - 1) break;
+            } else if (nums[m] < target) {
                 pre = m;
-            }else pre++;
+            } else
+                pre++;
 
-            if(nums[last] == target) {
+            if (nums[last] == target) {
                 arrs[1] = last;
-                if(pre==last) break;
-                if(nums[pre] == target) { arrs[0] = pre; break;}
-                else if(pre==last-1) break;
-            }else if(nums[m] > target) {
+                if (pre == last) break;
+                if (nums[pre] == target) {
+                    arrs[0] = pre;
+                    break;
+                } else if (pre == last - 1) break;
+            } else if (nums[m] > target) {
                 last = m;
-            }else last--;
+            } else
+                last--;
 
             m = (pre + last) / 2;
         }
-        if(arrs[0] != -1 && arrs[1] == -1)  arrs[1] = arrs[0];
-        if(arrs[0] == -1 && arrs[1] != -1)  arrs[0] = arrs[1];
+
+        if (arrs[0] != -1 && arrs[1] == -1) arrs[1] = arrs[0];
+        if (arrs[0] == -1 && arrs[1] != -1) arrs[0] = arrs[1];
+
         return arrs;
-    }
-
-    /**
-     * 二分查找
-     * @param a
-     * @param num
-     * @return 数组下标
-     */
-    public static int binarySearch(int[] a, int num) {
-        if (a.length == 0) return -1;
-
-        int startPos = 0;
-        int endPos = a.length - 1;
-        int m = (startPos + endPos) / 2;
-
-        while (startPos <= endPos) {
-            if (num == a[m]) return m;
-            if (num > a[m]) {
-                startPos = m + 1;
-            }
-            if (num < a[m]) {
-                endPos = m - 1;
-            }
-            m = (startPos + endPos) / 2;
-        }
-        return -1;
     }
 
     /**
@@ -117,42 +102,96 @@ public class SearchSolution {
             if (nums[mid] > nums[right]) left = mid;
             mid = (left + right) / 2;
         }
+
         return nums[mid];
     }
 
     /**
+     * leetcode 4. 寻找两个正序数组的中位数
+     * 给定两个大小分别为 m 和 n 的正序（从小到大）数组 nums1 和 nums2。请你找出并返回这两个正序数组的 中位数 。
+     *
+     * @param nums1
+     * @param nums2
+     * @return
+     */
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums1.length == 0 && nums2.length == 0) return 0.0;
+        if (nums1.length == 1 && nums2.length == 0) return nums1[0];
+        if (nums2.length == 1 && nums1.length == 0) return nums2[0];
+
+        int[] nums = new int[nums1.length + nums2.length];
+        System.arraycopy(nums1, 0, nums, 0, nums1.length);
+        System.arraycopy(nums2, 0, nums, nums1.length, nums2.length);
+        Arrays.sort(nums);
+        if (nums.length % 2 == 0)
+            return (nums[(nums.length) / 2 - 1] + nums[(nums.length) / 2]) / 2.0;
+        else
+            return nums[(nums.length) / 2];
+    }
+
+    /**
+     * leetcode 35. 搜索插入位置
+     * 二分查找
      *
      * @param nums
      * @param target
      * @return
      */
-    public static int search(int[] nums, int target) {
-        if (nums.length == 1) return nums[0];
-
+    public int searchInsert(int[] nums, int target) {
         int left = 0, right = nums.length - 1;
-        int mid = (left + right) / 2;
-
-        while (left < right) {
-            if(left + 1 == right) return Math.min(nums[left], nums[right]);
-            if(mid == 0 || mid == nums.length-1) break;
-            if (nums[mid] < nums[mid - 1] && nums[mid] < nums[mid + 1]) break;
-            if (nums[mid] < nums[right]) right = mid;
-            if (nums[mid] > nums[right]) left = mid;
-            mid = (left + right) / 2;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
         }
-        return nums[mid];
+        return left;
     }
 
+    /**
+     * 搜索插入位置
+     * 递归
+     *
+     * @param nums
+     * @param target
+     * @return
+     */
+    public int searchInsert(int[] nums, int target, int left, int right) {
+
+        if (nums[left] >= target) return left;
+        if (nums[right] < target) return right + 1;
+        if (nums[right] == target) return right;
+
+        int mid = (right - left) / 2 + left;
+        if (nums[mid] > target) {
+            return searchInsert(nums, target, left, mid - 1);
+        } else if (nums[mid] < target) {
+            return searchInsert(nums, target, mid + 1, right);
+        }
+        return mid;
+    }
+
+
     public static void main(String[] args) {
-        int a[] = {1,1};
-        int i = 2;
-        //System.out.println(search(a, i));
-        //System.out.println(binarySearch(a, i));
-        System.out.println(searchRange(a, i));
-        System.out.println(findMin(new int[] {4,5,6,7,0,1,2}));
-        System.out.println(findMin(new int[] {11,13,15,17}));
-        System.out.println(findMin(new int[] {1,3,5,7}));
-        System.out.println(findMin(new int[] {2,3,1}));
+        SearchSolution solution = new SearchSolution();
+
+        System.out.println(searchRange(new int[] {1,1}, 2));
+        System.out.println(findMin(new int[]{4, 5, 6, 7, 0, 1, 2}));
+        System.out.println(findMin(new int[]{11, 13, 15, 17}));
+        System.out.println(findMin(new int[]{1, 3, 5, 7}));
+        System.out.println(findMin(new int[]{2, 3, 1}));
+
+        System.out.println(solution.findMedianSortedArrays(new int[]{1, 2}, new int[]{3, 4}));
+        System.out.println(solution.findMedianSortedArrays(new int[]{1, 2}, new int[]{3}));
+        System.out.println(solution.findMedianSortedArrays(new int[]{}, new int[]{3}));
+
+        System.out.println(solution.searchInsert(new int[]{1, 3, 5, 7}, 4));
+        System.out.println(solution.searchInsert(new int[]{1, 3, 5, 7}, 3, 0, 2));
+
     }
 
 }

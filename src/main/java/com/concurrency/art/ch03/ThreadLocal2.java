@@ -12,10 +12,9 @@ import java.util.concurrent.TimeUnit;
  * 使用场景：自己进行改变，自己维护这个状态，不用其他线程
  * https://blog.csdn.net/zsfsoftware/article/details/50933151
  *
- * 必须回收自定义的 ThreadLocal 变量，尤其在线程池场景下，线程经常会被复用，如果不清理
- * 自定义的 ThreadLocal 变量，可能会影响后续业务逻辑和造成内存泄露等问题。尽量在代理中使用
- * try-finally 块进行回收。
-
+ * 必须回收自定义的 ThreadLocal 变量，尤其在线程池场景下，线程经常会被复用，如果不清理自定义的 ThreadLocal 变量，可能会影响后续业务逻辑和造成内存泄露等问题。
+ * 尽量在代理中使用try-finally 块进行回收。
+ *
  * objectThreadLocal.set(userInfo);
  * try {
  *   // ...

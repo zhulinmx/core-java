@@ -15,6 +15,11 @@ public class ListNode {
         this.next = next;
     }
 
+    /**
+     * 构建链表
+     * @param datas
+     * @return
+     */
     public static ListNode buildSequenceList(int ...datas) {
         ListNode head = null;
         ListNode pre = null;
@@ -33,6 +38,11 @@ public class ListNode {
         return head;
     }
 
+    /**
+     * 构建链表
+     * @param nodes
+     * @return
+     */
     public static ListNode buildSequenceList(ListNode ...nodes) {
         ListNode head = null;
         ListNode pre = null;
@@ -68,8 +78,15 @@ public class ListNode {
 
     @Override
     public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.val);
+        ListNode ln = this.next;
+        while (ln != null) {
+            sb.append(ln.val);
+            ln = ln.next;
+        }
         return "ListNode{" +
-                "data=" + val +
+                "data=" + sb.toString() +
                 '}';
     }
 

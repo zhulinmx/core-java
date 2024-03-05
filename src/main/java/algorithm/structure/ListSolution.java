@@ -1,11 +1,8 @@
 package algorithm.structure;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class C2 {
+public class ListSolution {
 
     /**
      * leetcode 206. 反转链表
@@ -98,6 +95,65 @@ public class C2 {
         return true;
     }
 
+    /**
+     * 输入一个链表，从尾到头打印链表每个节点的值
+     * 借助栈实现
+     *
+     */
+    public ArrayList<Integer> printListFromTailToHead(ListNode listNode) {
+        if (listNode == null)
+            return null;
+        Stack<ListNode> stack = new Stack<ListNode>();
+        ArrayList<Integer> arr = new ArrayList<Integer>();
+        while (listNode != null) {
+            stack.push(listNode);
+            listNode = listNode.getNext();
+        }
+
+        while (!stack.empty()) {
+            arr.add(stack.pop().getVal());
+        }
+        return arr;
+
+    }
+
+    /**
+     * leetcode 25. K 个一组翻转链表
+     * 给你链表的头节点 head ，每 k 个节点一组进行翻转，请你返回修改后的链表。
+     *
+     * @param head
+     * @param k
+     * @return
+     */
+    public static ListNode reverseKGroup(ListNode head, int k) {
+        if(head == null || head.next == null || k == 1) return head;
+
+        ListNode root = new ListNode(-1);
+        ListNode p = root;
+        ListNode q = null;
+        Deque<Integer> stack = new ArrayDeque<>();
+
+        while (head != null || stack.size() == k) {
+            if (stack.size() < k) {
+                if (stack.size() == 0)
+                    q = head;
+                stack.push(head.val);
+                head = head.next;
+            } else {
+                while (!stack.isEmpty()) {
+                    p.next = new ListNode(stack.pop());
+                    p = p.next;
+                }
+            }
+        }
+
+        if (stack.size() > 0) {
+            p.next = q;
+        }
+
+        return root.next;
+    }
+
     public static void main(String[] args) {
         ListNode n1 = new ListNode(2, null);
         ListNode n2 = new ListNode(3, n1);
@@ -106,8 +162,8 @@ public class C2 {
         ListNode n5 = new ListNode(7, n4);
 
         // 6 > 3 > 2 > null
-        System.out.println(C2.reverseList(n3));
-        System.out.println(C2.unRepeatList(n5));
+        System.out.println(ListSolution.reverseList(n3));
+        System.out.println(ListSolution.unRepeatList(n5));
 
         ListNode l1 = new ListNode(1);
         ListNode l2 = new ListNode(2);
@@ -115,11 +171,16 @@ public class C2 {
         ListNode l4 = new ListNode(4);
         ListNode l5 = new ListNode(5);
 
-
         System.out.println("--------------getIntersectionNode--------------");
         System.out.println(getIntersectionNode(ListNode.buildSequenceList(l1, l2, l3, l4), ListNode.buildSequenceList(l2, l3, l4, l5)));
+
         System.out.println("--------------isPalindrome--------------");
         System.out.println(isPalindrome(ListNode.buildSequenceList(1, 2, 2, 1)));
         System.out.println(isPalindrome(ListNode.buildSequenceList(1, 2, 3)));
+
+        System.out.println("--------------reverseKGroup--------------");
+        System.out.println(reverseKGroup(ListNode.buildSequenceList(1, 2, 3, 4, 5), 2));
+        System.out.println(reverseKGroup(ListNode.buildSequenceList(1, 2, 3, 4, 5), 3));
+        System.out.println(reverseKGroup(ListNode.buildSequenceList(1, 2), 2));
     }
 }
