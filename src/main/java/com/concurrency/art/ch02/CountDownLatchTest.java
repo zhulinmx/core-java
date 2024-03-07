@@ -1,4 +1,4 @@
-package com.concurrency.art.ch00;
+package com.concurrency.art.ch02;
 
 import java.util.concurrent.CountDownLatch;
 

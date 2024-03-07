@@ -8,7 +8,7 @@
 再者，考虑是否有更好解决方式；
 最后，阶段性回看，也许你随着深入了解之后，会强化理解甚至推翻你最开始的想法；
 
-# Java.util.concurrent包
+# Java.util.concurrent包（简称 JUC）
 JDK1.5之后引入，实现的一个粗粒度的并发框架。
 - java.util.concurrent :
   ConcurrentLinkedQueue、ConcurrentHashMap、CountDownLatch
@@ -62,9 +62,15 @@ JDK1.5之后引入，实现的一个粗粒度的并发框架。
 
    - AQS中 维护了一个volatile int state（代表共享资源）和一个FIFO线程等待队列（多线程争用资源被阻塞时会进入此队列）。
    这里volatile能够保证多线程下的可见性，当state=1则代表当前对象锁已经被占有，其他线程来加锁时则会失败，加锁失败的线程会被放入一个FIFO的等待队列中，并且会被UNSAFE.park()操作挂起，等待其他获取锁的线程释放锁才能够被唤醒。
-   另外state的操作都是通过 CAS 来保证其并发修改的安全性。
-    
-   - 参照 https://juejin.cn/post/6844904146127044622#heading-2
+   **另外state的操作都是通过 CAS 来保证其并发修改的安全性**    
+   _参照 https://juejin.cn/post/6844904146127044622#heading-2_
+   
+- AQS两种资源共享模式
+  - 独占/排他：
+    只有一个线程能执行，如ReentrantLock；
+  - 共享：
+    多个线程可同时执行，如Semaphore、CyclicBarrier、CountDownLatch、ReadWriteLock；
+  
 
 - 非公平锁和公平锁的区别（ReentrantLock默认创建非公平锁）：
    公平锁在加锁的时候，会先判断AQS等待队列中是存在节点，如果存在节点则会直接入队等待

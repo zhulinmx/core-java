@@ -7,9 +7,29 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class DataCache {
+/**
+ * 使用ReadWriteLock来设计一个缓存
+ *
+ *  1. ReentrantReadWriteLock允许选择公平性或非公平性。
+ *      默认情况下，它是非公平的，但如果需要，可以在构造时启用公平性。 // xxx = new ReentrantReadWriteLock(true);
+ *
+ *  2. ReentrantReadWriteLock和其他锁，比如ReentrantLock的区别吧。
+ *     ReentrantLock是一种排他锁，也就是说，不管是读操作还是写操作，同一时间只能有一个线程访问。
+ *     而ReadWriteLock则更灵活，允许多个线程同时进行读操作。
+ *
+ *  2. ReadWriteLock读写锁适合场景：
+ *    1) 读多写少的场景
+ *    当一个应用主要涉及到读取操作，而写操作相对较少时，使用ReadWriteLock非常合适。因为它允许多个线程同时读取数据，从而大大提高了并发性能。
+ *    2) 数据一致性要求高的场景
+ *
+ *  3. ReadWriteLock的锁降级和锁升级
+ *     锁降级是指在持有写锁的同时获取读锁，然后释放写锁的过程。这个过程中，数据不会被其他写操作修改，保证了数据的一致性。
+ *     锁升级，即从读锁升级到写锁，则在ReadWriteLock中是不被允许的。这是因为允许锁升级会引起死锁。
+ *
+ */
+public class DataCache<K,V> {
 
-    private final Map<Integer, Integer> cache = new LinkedHashMap<>();
+    private final Map<K,V> cache = new LinkedHashMap<>();
     private final ReadWriteLock rwLock;
     private final Lock readLock;
     private final Lock writeLock;
@@ -20,7 +40,7 @@ public class DataCache {
         this.writeLock = rwLock.writeLock();
     }
 
-    public List<Integer> allKeys() {
+    public List<K> allKeys() {
         readLock.lock(); // 获取读锁
         try {
             // 执行读取操作
@@ -30,7 +50,7 @@ public class DataCache {
         }
     }
 
-    public Integer readData(Integer key) {
+    public V readData(K key) {
         readLock.lock(); // 获取读锁
         try {
             // 执行读取操作
@@ -40,7 +60,7 @@ public class DataCache {
         }
     }
 
-    public void writeData(Integer key, Integer value) {
+    public void writeData(K key, V value) {
         writeLock.lock(); // 获取写锁
         try {
             // 执行写入操作
@@ -51,7 +71,7 @@ public class DataCache {
     }
 
     public static void main(String[] args) {
-        DataCache dc = new DataCache();
+        DataCache<Integer, Integer> dc = new DataCache<>();
         ExecutorService executorService = Executors.newFixedThreadPool(5);
 
         for (int i = 0; i < 1000; i++) {

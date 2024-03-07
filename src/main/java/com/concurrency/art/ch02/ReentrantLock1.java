@@ -3,9 +3,8 @@ package com.concurrency.art.ch02;
 import java.util.concurrent.TimeUnit;
 
 /**
- * reentrantlock用于代替synchronized
+ * ReentrantLock 用于代替 synchronized
  * 本例中由于m1锁定this, 只有m1执行完毕的时候， m2才能执行
- * 这里是复制synchronized最原始的语义
  */
 public class ReentrantLock1 {
 

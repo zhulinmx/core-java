@@ -22,8 +22,7 @@ public class Ch0212Array {
         }
 
         // 第二种：动态初始化
-        int[] arr;
-        arr = new int[5];
+        int[] arr = new int[5];
 
         // 给数组元素赋值
         for (int i = 0; i < 5; i++) {

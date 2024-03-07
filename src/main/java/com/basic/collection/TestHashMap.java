@@ -6,39 +6,39 @@ import java.util.Map;
 
 /**
  *
- * HashMap常考知识点
+ * HashMap知识点
  * 1. structure of HashMap
- * 2. using power-of-two expansion： 方法：tableSizeFor   ---> https://zhuanlan.zhihu.com/p/114184134
+ * 2. using power-of-two expansion（2倍length的扩容机制）：
+ *    计算数组下标时对hash和length进行了按位与运算：(length - 1) & hash ；
+ *    因此如果以2倍length去扩容，(length - 1) 的二进制所有位都是1，可以大大减少hash碰撞。
  * 3. ways to iterator
  * 4. differences with HashTable:
  *   （1）HashTable是线程安全的，因为大多数方法都加了synchronized 而HashMap不是。
- *   （2）HashMap中允许存在 null 键和 null值，而 HashTable 中不允许
+ *   （2）HashMap中允许存在 null 键和 null值，而 HashTable 中不允许。
  * 5. fail-fast （快速失败）
  * 6. 为什么不安全？
        因为 HashMap 多线程操作导致死循环问题，主要原因在于并发下的 Rehash 会造成元素之间会形成⼀个循环链表。
  * 7. ConcurrentHashMap 和 Hashtable 的区别：
- * (1) 底层数据结构： JDK1.7 的 ConcurrentHashMap 底层采⽤ 分段的数组+链表 实现，JDK1.8 采
- * ⽤的数据结构跟 HashMap1.8 的结构⼀样，数组+链表/红⿊⼆叉树。Hashtable 和 JDK1.8 之前
- * 的 HashMap 的底层数据结构类似都是采⽤ 数组+链表 的形式，数组是 HashMap 的主体，链表
- * 则是主要为了解决哈希冲突⽽存在的；
+ *    (1) 底层数据结构： JDK1.7 的 ConcurrentHashMap 底层采⽤ 分段的数组+链表 实现，JDK1.8 采
+ *    ⽤的数据结构跟 HashMap1.8 的结构⼀样，数组+链表/红⿊⼆叉树。Hashtable 和 JDK1.8 之前
+ *    的 HashMap 的底层数据结构类似都是采⽤ 数组+链表 的形式，数组是 HashMap 的主体，链表
+ *    则是主要为了解决哈希冲突⽽存在的；
  *
- *  (2)实现线程安全的⽅式（重要）：
- *  ① 在 JDK1.7 的时候，ConcurrentHashMap（分段锁） 对整个
- * 桶数组进⾏了分割分段(Segment)，每⼀把锁只锁容器其中⼀部分数据，多线程访问容器⾥不同
- * 数据段的数据，就不会存在锁竞争，提⾼并发访问率。 到了 JDK1.8 的时候已经摒弃了
- * Segment 的概念，⽽是直接⽤ Node 数组+链表+红⿊树的数据结构来实现，并发控制使⽤
- * synchronized 和 CAS 来操作。（JDK1.6 以后 对 synchronized 锁做了很多优化） 整个看起
- * 来就像是优化过且线程安全的 HashMap，虽然在 JDK1.8 中还能看到 Segment 的数据结构，但
- * 是已经简化了属性，只是为了兼容旧版本；
- * ② Hashtable(同⼀把锁) :使⽤ synchronized 来保
- * 证线程安全，效率⾮常低下。当⼀个线程访问同步⽅法时，其他线程也访问同步⽅法，可能会进
- * ⼊阻塞或轮询状态，如使⽤ put 添加元素，另⼀个线程不能使⽤ put 添加元素，也不能使⽤
- * get，竞争会越来越激烈效率越低。
+ *    (2)实现线程安全的⽅式（重要）：
+ *    ① 在 JDK1.7 的时候，ConcurrentHashMap（分段锁） 对整个
+ *    桶数组进⾏了分割分段(Segment)，每⼀把锁只锁容器其中⼀部分数据，多线程访问容器⾥不同
+ *    数据段的数据，就不会存在锁竞争，提⾼并发访问率。 到了 JDK1.8 的时候已经摒弃了
+ *    Segment 的概念，⽽是直接⽤ Node 数组+链表+红⿊树的数据结构来实现，并发控制使⽤
+ *    synchronized 和 CAS 来操作。（JDK1.6 以后 对 synchronized 锁做了很多优化） 整个看起
+ *    来就像是优化过且线程安全的 HashMap，虽然在 JDK1.8 中还能看到 Segment 的数据结构，但
+ *    是已经简化了属性，只是为了兼容旧版本；
+ *    ② Hashtable(同⼀把锁) :使⽤ synchronized 来保证线程安全，效率⾮常低下。
+ *    当⼀个线程访问同步⽅法时，其他线程也访问同步⽅法，可能会进⼊阻塞或轮询状态，
+ *    如使⽤ put 添加元素，另⼀个线程不能使⽤ put 添加元素，也不能使⽤get，竞争会越来越激烈效率越低。
  *
- * **********来自alibaba文档********
+ * **********以下来自alibaba文档********
  * 【推荐】集合初始化时，指定集合初始值大小。
- * 说明：HashMap 使用构造方法 HashMap(int initialCapacity) 进行初始化时，如果暂时无法确定集合大小，那么指
- * 定默认值（16）即可。
+ * 说明：HashMap 使用构造方法 HashMap(int initialCapacity) 进行初始化时，如果暂时无法确定集合大小，那么指定默认值（16）即可。
  * 正例：initialCapacity = (需要存储的元素个数 / 负载因子) + 1。注意负载因子（即 loaderfactor）默认为 0.75，如果
  * 暂时无法确定初始值大小，请设置为 16（即默认值）。
  * 反例：HashMap 需要放置 1024 个元素，由于没有设置容量初始大小，随着元素增加而被迫不断扩容，resize() 方法
@@ -83,7 +83,15 @@ public class TestHashMap {
         Map<Integer, String> map = new HashMap<>(16);
         map.put(1, "Java");
         map.put(2, "JDK");
+        map.put(3, "JVM");
+        map.put(4, "JUC");
+        map.put(5, "JVM");
+        map.put(6, "JVM");
+        map.put(17, "JDK");
         map.put(null, null);
+
+        //此时Node(1, "Java")的next节点是Node(17, "JDK")
+        System.out.println(map.get(17));
 
         // 1.迭代器 EntrySet
         Iterator<Map.Entry<Integer, String>> iterator = map.entrySet().iterator();

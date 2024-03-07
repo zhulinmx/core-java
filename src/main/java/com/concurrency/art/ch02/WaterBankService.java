@@ -1,10 +1,12 @@
-package com.concurrency.art.ch00;
+package com.concurrency.art.ch02;
 
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.*;
 
-public class BankWaterService implements Runnable {
+/**
+ * 银行流水计算
+ */
+public class WaterBankService implements Runnable {
 
     /**
      * 创建四个屏障，处理完之后执行当前类的run方法, BankWaterService是继承了Runnable，指定了this
@@ -58,7 +60,7 @@ public class BankWaterService implements Runnable {
 
 
     public static void main(String[] args) {
-        BankWaterService bankWaterService = new BankWaterService();
-        bankWaterService.caculate();
+        WaterBankService service = new WaterBankService();
+        service.caculate();
     }
 }

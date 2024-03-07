@@ -87,7 +87,7 @@ public class LFUCache {
         return deadNode;
     }
 
-    class Node {
+    static class Node {
         int key;
         int value;
         //频次

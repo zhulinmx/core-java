@@ -83,6 +83,42 @@ public class TreeSolution1 {
     }
 
     /**
+     * leetcode 257. 二叉树的所有路径
+     * 给你一个二叉树的根节点 root ，按 任意顺序 ，返回所有从根节点到叶子节点的路径。
+     *
+     */
+    List<String> paths = new ArrayList<>();
+
+    public List<String> binaryTreePaths(TreeNode root) {
+        LinkedList list = new LinkedList<>();
+        list.add(root.val);
+        dfsTree(root, list);
+        return paths;
+    }
+
+    void dfsTree(TreeNode root, LinkedList<String> path) {
+        if (root.left == null && root.right == null) {
+            //String str = path.toString().replace(", ", "->");
+            //paths.add(str.substring(1, str.length()-1));
+            paths.add(path.toString().replace(", ", "->").replace("[", "").replace("]", ""));
+            return;
+        }
+
+        //左右节点分别开启回溯
+        if (root.left != null) {
+            path.add(String.valueOf(root.left.val));
+            dfsTree(root.left, path);
+            path.removeLast();
+        }
+        if (root.right != null) {
+            path.add(String.valueOf(root.right.val));
+            dfsTree(root.right, path);
+            path.removeLast();
+        }
+    }
+
+
+    /**
      * leetcode 437. 路径总和 III
      * 给定一个二叉树的根节点 root ，和一个整数 targetSum ，求该二叉树里节点值之和等于 targetSum 的 路径 的数目。
      * 路径 不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。
@@ -181,5 +217,6 @@ public class TreeSolution1 {
         System.out.println(solution.maxPathSum(new TreeNode(1, new TreeNode(-2), new TreeNode(3))));
 
 
+        System.out.println(solution.binaryTreePaths(new TreeNode(1, new TreeNode(2, null, new TreeNode(5)), new TreeNode(3))));
     }
 }
