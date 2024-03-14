@@ -38,15 +38,11 @@
  * http://lovestblog.cn/
  * https://opts.console.heapdump.cn/
  * https://heapdump.cn/
-
-# GC log分析：
-  https://gceasy.io/gc-dashboard.jsp
+ * GC log分析：https://gceasy.io/gc-dashboard.jsp
 
 # 一些框架
-- Spring
-- ORM
-- MVC
-- 可阅： https://github.com/wuyouzhuguli/SpringAll
+- Spring、ORM、MVC：https://github.com/wuyouzhuguli/SpringAll
+- 通用架构：https://martinfowler.com/architecture/
 
 # 锻炼写文档的能力（参考如下）：
 - https://docs.aws.amazon.com/zh_cn/ （strongly recommend）
