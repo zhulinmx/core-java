@@ -1,7 +1,8 @@
 package com.basic.design.singleton;
 
 /**
- *  静态内部类
+ * 单例模式
+ * 静态内部类
  */
 public class Singleton {
     private int x = 1;
